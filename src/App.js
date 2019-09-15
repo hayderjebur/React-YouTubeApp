@@ -1,26 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import Search from "./components/Search.component";
+import VideosList from "./components/videos.list";
+import youtube from "../src/API/youtube";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      videos: []
+    };
+  }
+  onSearchSubmit = async text => {
+    const response = await youtube.get("/search", {
+      params: {
+        q: text
+      }
+    });
+    this.setState({
+      videos: response.data.items
+    });
+  };
+  render() {
+    return (
+      <div className="ui container">
+        <Search onSearchSubmit={this.onSearchSubmit} />
+        <VideosList videos={this.state.videos} />
+      </div>
+    );
+  }
 }
 
 export default App;
